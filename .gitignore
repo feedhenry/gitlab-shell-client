@@ -1,5 +1,18 @@
 .gradle
 build/
 
+*.pydevproject
+.metadata
+.gradle
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+
 # Ignore Gradle GUI config
 gradle-app.setting
