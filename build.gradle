@@ -1,8 +1,27 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
+group = 'com.feedhenry.gitlabshell'
+archivesBaseName = 'gitlab-shell-client'
 sourceCompatibility = 1.6
 version = '1.0'
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+  archives javadocJar, sourcesJar
+}
+
 jar {
     manifest {
         attributes 'Implementation-Title': 'Gitlab Shell Client', 'Implementation-Version': version
@@ -21,10 +40,51 @@ test {
     systemProperties 'property': 'value'
 }
 
+//signing {
+//  sign configurations.archives
+//}
+
 uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name 'Gitlab Shell Client'
+        packaging 'jar'
+        // optionally artifactId can be defined here
+        description 'Java Client for remote administration of Gitlab Shell'
+        url 'https://github.com/feedhenry/gitlab-shell-client'
+
+        scm {
+          connection 'scm:git:https://github.com/feedhenry/gitlab-shell-client.git'
+          developerConnection 'scm:git:https://github.com/feedhenry/gitlab-shell-client.git'
+          url 'https://github.com/feedhenry/gitlab-shell-client.git'
+        }
+
+        licenses {
+          license {
+            name 'The MIT License (MIT)'
+            url 'http://opensource.org/licenses/MIT'
+          }
+        }
+
+        developers {
+          developer {
+            id 'david.martin.fh'
+            name 'David Martin'
+            email 'david.martin@feedhenry.com'
+          }
+        }
+      }
     }
+  }
 }
