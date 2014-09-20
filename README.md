@@ -2,6 +2,26 @@
 
 Java Client for remote administration of Gitlab Shell
 
+## Installation
+
+### Maven (pom.xml)
+
+```xml
+<dependency>
+    <groupId>com.feedhenry.gitlabshell</groupId>
+    <artifactId>gitlab-shell-client</artifactId>
+    <version>1.0</version>
+</dependency>
+```
+
+### Gradle (build.gradle)
+
+```groovy
+dependencies {
+  compile 'com.feedhenry.gitlabshell:gitlab-shell-client:1.0'
+}
+```
+
 ## Usage
 
 ```java
