@@ -74,12 +74,15 @@ public class GLSClient {
     Scanner errScanner = new Scanner(((ChannelExec) channel).getErrStream());
     Scanner resScanner = new Scanner(channel.getInputStream());
     resScanner.useDelimiter(Pattern.compile("\\n"));
-    while (!channel.isClosed()) {
+    while (true) {
       while(errScanner.hasNext()) {
         err.append(errScanner.next());
       }
       while(resScanner.hasNext()) {
         res.add(resScanner.next());
+      }
+      if (channel.isClosed()) {
+        break;
       }
       Thread.sleep(100);
     }

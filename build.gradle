@@ -6,7 +6,7 @@ apply plugin: 'signing'
 group = 'com.feedhenry.gitlabshell'
 archivesBaseName = 'gitlab-shell-client'
 sourceCompatibility = 1.6
-version = '1.1'
+version = '1.2'
 
 task javadocJar(type: Jar) {
     classifier = 'javadoc'
