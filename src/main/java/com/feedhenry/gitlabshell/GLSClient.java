@@ -59,7 +59,7 @@ public class GLSClient {
     executeCommand(String.format("~/gitlab-shell/bin/gitlab-projects rm-project %s", projectName));
   }
   
-  private List<String> executeCommand(String command) throws Exception {
+  public List<String> executeCommand(String command) throws Exception {
     JSch jsch = getJSch();
 
     Session session = jsch.getSession(user, host, port);
