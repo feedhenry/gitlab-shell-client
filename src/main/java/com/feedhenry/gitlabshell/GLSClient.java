@@ -23,21 +23,33 @@ public class GLSClient {
     this.publicKey = builder.publicKey;
     this.privateKey = builder.privateKey;
   }
-  
+
   public List<GLSKey> listKeys() throws Exception {
     List<GLSKey> keys = new ArrayList<GLSKey>();
     List<String> res = executeCommand("~/gitlab-shell/bin/gitlab-keys list-keys");
     for (String keyLine : res) {
       String[] keyParts = keyLine.split(" ");
-      keys.add(new GLSKey(keyParts[0], keyParts[1]));
+      String comment = keyParts.length > 2 ? keyParts[2] : null;
+      keys.add(new GLSKey(keyParts[0], keyParts[1], comment));
     }
     return keys;
   }
-  
-  public void addKey(String keyId, String key) throws Exception {
-    executeCommand(String.format("~/gitlab-shell/bin/gitlab-keys add-key %s %s", keyId, key));
+
+  /**
+   * 
+   * @param keyId user identifier for this key i.e. the id that permissions are checked against
+   * @param fullKey the full ssh key, inlcuding any ssh comment e.g. "ssh-rsa AAAAbcde user@example.com"
+   * @throws Exception
+   */
+  public void addKey(String keyId, String fullKey) throws Exception {
+    executeCommand(String.format("~/gitlab-shell/bin/gitlab-keys add-key %s \"%s\"", keyId, fullKey));
   }
   
+  /**
+   * 
+   * @param keyId user identifier of the key to remove i.e. the id that permissions are checked against
+   * @throws Exception
+   */
   public void rmKey(String keyId) throws Exception {
     executeCommand(String.format("~/gitlab-shell/bin/gitlab-keys rm-key %s", keyId));
   }

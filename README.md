@@ -10,7 +10,7 @@ Java Client for remote administration of Gitlab Shell
 <dependency>
     <groupId>com.feedhenry.gitlabshell</groupId>
     <artifactId>gitlab-shell-client</artifactId>
-    <version>1.2.1</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -18,7 +18,7 @@ Java Client for remote administration of Gitlab Shell
 
 ```groovy
 dependencies {
-  compile 'com.feedhenry.gitlabshell:gitlab-shell-client:1.2.1'
+  compile 'com.feedhenry.gitlabshell:gitlab-shell-client:2.0.0'
 }
 ```
 
@@ -41,7 +41,7 @@ client.addProject("myrepos/repo1.git");
 
 client.rmProject("myrepos/repo1.git");
 
-client.addKey("user1", "ssh-rsa AAAA....");
+client.addKey("user1", "ssh-rsa AAAA.... user@example.com");
 
 client.rmKey("user1");
 ```
