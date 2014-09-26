@@ -1,4 +1,9 @@
-language: java
-script: gradle check
+# .travis.yml
+language:
+  - java
+
 before_script:
   - cp gradle.properties.sample gradle.properties
+
+script:
+  - gradle check
