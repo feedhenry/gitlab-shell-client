@@ -1,3 +1,4 @@
 language: java
+script: gradle check
 before_script:
   - cp gradle.properties.sample gradle.properties
