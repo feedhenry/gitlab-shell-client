@@ -7,3 +7,6 @@ before_install:
 
 install:
   - gradle assemble -x signArchives
+
+script:
+  - gradle build -x signArchives
