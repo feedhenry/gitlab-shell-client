@@ -6,7 +6,17 @@ apply plugin: 'signing'
 group = 'com.feedhenry.gitlabshell'
 archivesBaseName = 'gitlab-shell-client'
 sourceCompatibility = 1.6
-version = '2.0.0'
+version = '3.0.0'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "net.saliman:gradle-cobertura-plugin:2.2.4"
+    }
+}
+apply plugin: 'cobertura'
 
 task javadocJar(type: Jar) {
     classifier = 'javadoc'
@@ -34,10 +44,9 @@ repositories {
 
 dependencies {
     compile 'com.jcraft:jsch:0.1.51'
-}
-
-test {
-    systemProperties 'property': 'value'
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+    testCompile 'junit:junit:4.+'
+    testCompile 'org.mockito:mockito-all:1.9.5'
 }
 
 signing {

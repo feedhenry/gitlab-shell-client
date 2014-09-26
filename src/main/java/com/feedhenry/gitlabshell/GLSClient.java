@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.Validate;
+
 import com.jcraft.jsch.*;
 
 public class GLSClient {
@@ -30,7 +32,8 @@ public class GLSClient {
     for (String keyLine : res) {
       String[] keyParts = keyLine.split(" ");
       String comment = keyParts.length > 2 ? keyParts[2] : null;
-      keys.add(new GLSKey(keyParts[0], keyParts[1], comment));
+      String keyId = keyParts[0].replaceFirst("^key-", "");
+      keys.add(new GLSKey(keyId, keyParts[1], comment));
     }
     return keys;
   }
@@ -42,7 +45,9 @@ public class GLSClient {
    * @throws Exception
    */
   public void addKey(String keyId, String fullKey) throws Exception {
-    executeCommand(String.format("~/gitlab-shell/bin/gitlab-keys add-key %s \"%s\"", keyId, fullKey));
+    Validate.notBlank(keyId, "keyId must not be null or an empty string");
+    Validate.notBlank(fullKey, "fullKey must not be null or an empty string");
+    executeCommand(String.format("~/gitlab-shell/bin/gitlab-keys add-key %s \"%s\"", "key-" + keyId, fullKey));
   }
   
   /**
@@ -51,24 +56,27 @@ public class GLSClient {
    * @throws Exception
    */
   public void rmKey(String keyId) throws Exception {
-    executeCommand(String.format("~/gitlab-shell/bin/gitlab-keys rm-key %s", keyId));
+    Validate.notBlank(keyId, "keyId must not be null or an empty string");
+    executeCommand(String.format("~/gitlab-shell/bin/gitlab-keys rm-key %s", "key-" + keyId));
   }
   
   public List<GLSProject> listProjects() throws Exception {
     List<GLSProject> keys = new ArrayList<GLSProject>();
     List<String> res = executeCommand("~/gitlab-shell/bin/gitlab-projects list-projects");
     for (String projectName : res) {
-      keys.add(new GLSProject(projectName));
+      keys.add(new GLSProject(projectName.replaceFirst(".git$", "")));
     }
     return keys;
   }
   
   public void addProject(String projectName) throws Exception {
-    executeCommand(String.format("~/gitlab-shell/bin/gitlab-projects add-project %s", projectName));
+    Validate.notBlank(projectName, "projectName must not be null or an empty string");
+    executeCommand(String.format("~/gitlab-shell/bin/gitlab-projects add-project %s", projectName + ".git"));
   }
   
   public void rmProject(String projectName) throws Exception {
-    executeCommand(String.format("~/gitlab-shell/bin/gitlab-projects rm-project %s", projectName));
+    Validate.notBlank(projectName, "projectName must not be null or an empty string");
+    executeCommand(String.format("~/gitlab-shell/bin/gitlab-projects rm-project %s", projectName + ".git"));
   }
   
   public List<String> executeCommand(String command) throws Exception {
@@ -76,6 +84,7 @@ public class GLSClient {
 
     Session session = jsch.getSession(user, host, port);
     session.setConfig("StrictHostKeyChecking", "no");
+    session.setTimeout(20000); // 20 seconds
 
     session.connect();
     Channel channel = session.openChannel("exec");

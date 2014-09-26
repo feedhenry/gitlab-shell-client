@@ -14,7 +14,7 @@ public class GLSKey {
   
   /**
    * 
-   * @return the user identifier of the user who owns this key, and permissions are linked to
+   * @return the user identifier for this key i.e. the key name with the 'key-' prefix removed
    */
   public String getKeyId() {
     return keyId;

@@ -10,7 +10,7 @@ Java Client for remote administration of Gitlab Shell
 <dependency>
     <groupId>com.feedhenry.gitlabshell</groupId>
     <artifactId>gitlab-shell-client</artifactId>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -18,7 +18,7 @@ Java Client for remote administration of Gitlab Shell
 
 ```groovy
 dependencies {
-  compile 'com.feedhenry.gitlabshell:gitlab-shell-client:2.0.0'
+  compile 'com.feedhenry.gitlabshell:gitlab-shell-client:3.0.0'
 }
 ```
 
