@@ -96,11 +96,11 @@ public class GLSClientTest {
   public void testAddKey() throws Exception {
     Mockito.doReturn(null).when(client).executeCommand(Mockito.anyString());
 
-    client.addKey("user1", "AAAA1234");
-    Mockito.verify(client, Mockito.times(1)).executeCommand(Mockito.eq("~/gitlab-shell/bin/gitlab-keys add-key key-user1 \"AAAA1234\""));
+    client.addKey("user1", "ssh-rsa AAAA1234");
+    Mockito.verify(client, Mockito.times(1)).executeCommand(Mockito.eq("~/gitlab-shell/bin/gitlab-keys add-key key-user1 \"ssh-rsa AAAA1234\""));
 
-    client.addKey("user2", "AAAA5678 user2@example.com");
-    Mockito.verify(client, Mockito.times(1)).executeCommand(Mockito.eq("~/gitlab-shell/bin/gitlab-keys add-key key-user2 \"AAAA5678 user2@example.com\""));
+    client.addKey("user2", "ssh-rsa AAAA5678 user2@example.com");
+    Mockito.verify(client, Mockito.times(1)).executeCommand(Mockito.eq("~/gitlab-shell/bin/gitlab-keys add-key key-user2 \"ssh-rsa AAAA5678 user2@example.com\""));
   }
   
   @Test(expected=NullPointerException.class)

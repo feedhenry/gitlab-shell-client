@@ -39,9 +39,9 @@ List<GLSKey> keys = client.listKeys();
 
 List<GLSProject> projects = client.getProjects();
 
-client.addProject("myrepos/repo1.git");
+client.addProject("myrepos/repo1");
 
-client.rmProject("myrepos/repo1.git");
+client.rmProject("myrepos/repo1");
 
 client.addKey("user1", "ssh-rsa AAAA.... user@example.com");
 
