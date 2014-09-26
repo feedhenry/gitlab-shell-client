@@ -2,8 +2,5 @@
 language:
   - java
 
-before_script:
+before_install:
   - cp gradle.properties.sample gradle.properties
-
-script:
-  - gradle check
