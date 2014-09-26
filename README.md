@@ -1,5 +1,7 @@
 # Gitlab Shell Client
 
+[![Build Status](https://travis-ci.org/feedhenry/gitlab-shell-client.svg?branch=master)](https://travis-ci.org/feedhenry/gitlab-shell-client) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.feedhenry.gitlabshell/gitlab-shell-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.feedhenry.gitlabshell/gitlab-shell-client)
+
 Java Client for remote administration of Gitlab Shell
 
 ## Installation
