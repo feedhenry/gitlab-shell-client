@@ -4,3 +4,6 @@ language:
 
 before_install:
   - cp gradle.properties.sample gradle.properties
+
+install:
+  - gradle assemble -x signArchives
