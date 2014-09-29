@@ -1,11 +1,13 @@
 package com.feedhenry.gitlabshell;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.CharSet;
 import org.apache.commons.lang3.Validate;
 
 import com.jcraft.jsch.*;
@@ -93,21 +95,21 @@ public class GLSClient {
     InputStream errs = ((ChannelExec) channel).getErrStream();
     channel.connect();
     
-    StringBuilder res = new StringBuilder();
-    StringBuilder err = new StringBuilder();
+    ByteArrayOutputStream res = new ByteArrayOutputStream();
+    ByteArrayOutputStream err = new ByteArrayOutputStream();
     int exitStatus = 0;
-    byte[] resTmp = new byte[1024];
-    byte[] errTmp = new byte[1024];
+    byte[] resTmp = new byte[4096];
+    byte[] errTmp = new byte[4096];
     while (true) {
       while(in.available() > 0) {
-        int i = in.read(resTmp, 0, 1024);
-        if (i < 0) break;
-        res.append(resTmp);
+        int len = in.read(resTmp);
+        if (len < 0) break;
+        res.write(resTmp, 0, len);
       }
       while(errs.available() > 0) {
-        int i = errs.read(errTmp, 0, 1024);
-        if (i < 0) break;
-        err.append(errTmp);
+        int len = errs.read(errTmp);
+        if (len < 0) break;
+        err.write(errTmp, 0, len);
       }
       if (channel.isClosed()) {
         if (in.available() > 0) continue;
@@ -116,13 +118,13 @@ public class GLSClient {
       }
       Thread.sleep(100);
     }
-    if (err.length() > 0) {
-      throw new Exception("Unable to process command (" + err.toString() + ")");
+    if (err.size() > 0) {
+      throw new Exception("Unable to process command (" + err.toString("UTF-8") + ")");
     }
     channel.disconnect();
     session.disconnect();
     
-    return Arrays.asList(res.toString().split("\\n"));
+    return Arrays.asList(res.toString("UTF-8").split("\\n"));
   }
   
   private JSch getJSch() throws Exception {
