@@ -37,7 +37,7 @@ GLSClient client = new GLSClient.Builder()
 
 List<GLSKey> keys = client.listKeys();
 
-List<GLSProject> projects = client.getProjects();
+String[] projects = client.getProjects();
 
 client.addProject("myrepos/repo1");
 
