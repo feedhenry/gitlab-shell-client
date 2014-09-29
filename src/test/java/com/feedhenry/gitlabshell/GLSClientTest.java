@@ -2,6 +2,7 @@ package com.feedhenry.gitlabshell;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,17 +80,15 @@ public class GLSClientTest {
   @Test
   public void testListProjects() throws Exception {
     // test projects
-    List<String> mockRes = new ArrayList<String>();
-    mockRes.add("testrepo1.git");
-    mockRes.add("ns1/testrepo2.git");
-    mockRes.add("ns1/ns2/testrepo3.git");
+    ByteArrayOutputStream mockRes = Mockito.mock(ByteArrayOutputStream.class);
+    Mockito.when(mockRes.toString()).thenReturn("testrepo1.git\nns1/testrepo2.git\nns1/ns2/testrepo3.git");
     Mockito.doReturn(mockRes).when(client).executeCommand(Mockito.anyString());
     
-    List<GLSProject> projects = client.listProjects();
-    assertEquals(3, projects.size());
-    assertEquals("testrepo1", projects.get(0).getProjectName());
-    assertEquals("ns1/testrepo2", projects.get(1).getProjectName());
-    assertEquals("ns1/ns2/testrepo3", projects.get(2).getProjectName());
+    String[] projects = client.listProjects();
+    assertEquals(3, projects.length);
+    assertEquals("testrepo1", projects[0]);
+    assertEquals("ns1/testrepo2", projects[1]);
+    assertEquals("ns1/ns2/testrepo3", projects[2]);
   }
   
   @Test
@@ -150,11 +149,8 @@ public class GLSClientTest {
   @Test
   public void testListKeys() throws Exception {
     // test projects
-    List<String> mockRes = new ArrayList<String>();
-    mockRes.add("key-user1 AAAA1234 user1@example.com");
-    mockRes.add("key-user1 AAAA5678 user1@example.com@1234");
-    mockRes.add("key-user2 AAAA8765 user2");
-    mockRes.add("key-user3 AAAA9876");
+    ByteArrayOutputStream mockRes = Mockito.mock(ByteArrayOutputStream.class);
+    Mockito.when(mockRes.toString()).thenReturn("key-user1 AAAA1234 user1@example.com\nkey-user1 AAAA5678 user1@example.com@1234\nkey-user2 AAAA8765 user2\nkey-user3 AAAA9876");
     Mockito.doReturn(mockRes).when(client).executeCommand(Mockito.anyString());
     
     List<GLSKey> keys = client.listKeys();

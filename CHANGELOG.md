@@ -1,3 +1,11 @@
+# 4.0.0
+
+- removed GLSProject object in favour of just using a String (Thats all a project is anyways, for now) 
+
+# 3.0.2
+
+- use ByteArrayOutputStream for dumping bytes are they are read
+
 # 3.0.1
 
 - use byte reading instead of scanner to fix issue with blocking indefinitely on err scanner next check

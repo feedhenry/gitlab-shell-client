@@ -4,10 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.CharSet;
 import org.apache.commons.lang3.Validate;
 
 import com.jcraft.jsch.*;
@@ -30,8 +28,8 @@ public class GLSClient {
 
   public List<GLSKey> listKeys() throws Exception {
     List<GLSKey> keys = new ArrayList<GLSKey>();
-    List<String> res = executeCommand("~/gitlab-shell/bin/gitlab-keys list-keys");
-    for (String keyLine : res) {
+    ByteArrayOutputStream res = executeCommand("~/gitlab-shell/bin/gitlab-keys list-keys");
+    for (String keyLine : res.toString().split("\\n")) {
       String[] keyParts = keyLine.split(" ");
       String comment = keyParts.length > 2 ? keyParts[2] : null;
       String keyId = keyParts[0].replaceFirst("^key-", "");
@@ -62,13 +60,9 @@ public class GLSClient {
     executeCommand(String.format("~/gitlab-shell/bin/gitlab-keys rm-key %s", "key-" + keyId));
   }
   
-  public List<GLSProject> listProjects() throws Exception {
-    List<GLSProject> keys = new ArrayList<GLSProject>();
-    List<String> res = executeCommand("~/gitlab-shell/bin/gitlab-projects list-projects");
-    for (String projectName : res) {
-      keys.add(new GLSProject(projectName.replaceFirst(".git$", "")));
-    }
-    return keys;
+  public String[] listProjects() throws Exception {
+    ByteArrayOutputStream res = executeCommand("~/gitlab-shell/bin/gitlab-projects list-projects");
+    return res.toString().split(".git(\n|$)");
   }
   
   public void addProject(String projectName) throws Exception {
@@ -81,7 +75,7 @@ public class GLSClient {
     executeCommand(String.format("~/gitlab-shell/bin/gitlab-projects rm-project %s", projectName + ".git"));
   }
   
-  public List<String> executeCommand(String command) throws Exception {
+  public ByteArrayOutputStream executeCommand(String command) throws Exception {
     JSch jsch = getJSch();
 
     Session session = jsch.getSession(user, host, port);
@@ -124,7 +118,7 @@ public class GLSClient {
     channel.disconnect();
     session.disconnect();
     
-    return Arrays.asList(res.toString("UTF-8").split("\\n"));
+    return res;
   }
   
   private JSch getJSch() throws Exception {
