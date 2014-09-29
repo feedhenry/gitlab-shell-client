@@ -1,10 +1,10 @@
 package com.feedhenry.gitlabshell;
 
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.Validate;
 
@@ -85,35 +85,44 @@ public class GLSClient {
     Session session = jsch.getSession(user, host, port);
     session.setConfig("StrictHostKeyChecking", "no");
     session.setTimeout(20000); // 20 seconds
-
     session.connect();
+    
     Channel channel = session.openChannel("exec");
     ((ChannelExec) channel).setCommand(command);
+    InputStream in=channel.getInputStream();
+    InputStream errs = ((ChannelExec) channel).getErrStream();
     channel.connect();
+    
+    StringBuilder res = new StringBuilder();
     StringBuilder err = new StringBuilder();
-    List<String> res = new ArrayList<String>();
-    Scanner errScanner = new Scanner(((ChannelExec) channel).getErrStream());
-    Scanner resScanner = new Scanner(channel.getInputStream());
-    resScanner.useDelimiter(Pattern.compile("\\n"));
+    int exitStatus = 0;
+    byte[] resTmp = new byte[1024];
+    byte[] errTmp = new byte[1024];
     while (true) {
-      while(errScanner.hasNext()) {
-        err.append(errScanner.next());
+      while(in.available() > 0) {
+        int i = in.read(resTmp, 0, 1024);
+        if (i < 0) break;
+        res.append(resTmp);
       }
-      while(resScanner.hasNext()) {
-        res.add(resScanner.next());
+      while(errs.available() > 0) {
+        int i = errs.read(errTmp, 0, 1024);
+        if (i < 0) break;
+        err.append(errTmp);
       }
       if (channel.isClosed()) {
+        if (in.available() > 0) continue;
+        exitStatus = channel.getExitStatus();
         break;
       }
       Thread.sleep(100);
     }
-    if (!err.toString().isEmpty()) {
+    if (err.length() > 0) {
       throw new Exception("Unable to process command (" + err.toString() + ")");
     }
     channel.disconnect();
     session.disconnect();
     
-    return res;
+    return Arrays.asList(res.toString().split("\\n"));
   }
   
   private JSch getJSch() throws Exception {

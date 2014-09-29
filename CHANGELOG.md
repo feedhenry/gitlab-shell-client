@@ -1,3 +1,7 @@
+# 3.0.1
+
+- use byte reading instead of scanner to fix issue with blocking indefinitely on err scanner next check
+
 # 3.0.0
 
 - Added unit tests
