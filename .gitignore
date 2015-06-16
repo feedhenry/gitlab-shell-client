@@ -1,3 +1,5 @@
+gitlab-shell-client.iml
+.idea/
 .gradle
 build/
 gradle.properties
