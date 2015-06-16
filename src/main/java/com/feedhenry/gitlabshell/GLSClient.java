@@ -4,7 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.*;
 
 import org.apache.commons.lang3.Validate;
 
@@ -76,8 +78,9 @@ public class GLSClient {
   }
   
   public ByteArrayOutputStream executeCommand(String command) throws Exception {
+    ExecutorService pool = Executors.newFixedThreadPool(2);
     JSch jsch = getJSch();
-
+    final long start = new Date().getTime();
     Session session = jsch.getSession(user, host, port);
     session.setConfig("StrictHostKeyChecking", "no");
     session.setTimeout(20000); // 20 seconds
@@ -85,38 +88,44 @@ public class GLSClient {
     
     Channel channel = session.openChannel("exec");
     ((ChannelExec) channel).setCommand(command);
-    InputStream in=channel.getInputStream();
-    InputStream errs = ((ChannelExec) channel).getErrStream();
+    final InputStream in=channel.getInputStream();
+    final InputStream errs = ((ChannelExec) channel).getErrStream();
     channel.connect();
-    
-    ByteArrayOutputStream res = new ByteArrayOutputStream();
-    ByteArrayOutputStream err = new ByteArrayOutputStream();
     int exitStatus = 0;
-    byte[] resTmp = new byte[4096];
+    final byte[] resTmp = new byte[4096];
     byte[] errTmp = new byte[4096];
-    while (true) {
-      while(in.available() > 0) {
-        int len = in.read(resTmp);
-        if (len < 0) break;
-        res.write(resTmp, 0, len);
+    int count = 0;
+    Future<ByteArrayOutputStream> ftRes = pool.submit(new Callable<ByteArrayOutputStream>() {
+      @Override public ByteArrayOutputStream call() throws Exception {
+        ByteArrayOutputStream res = new ByteArrayOutputStream();
+        int len = 0;
+        byte[] resTmp = new byte[4096];
+        while((len = in.read(resTmp)) > -1) {
+          res.write(resTmp, 0, len);
+        }
+        return res;
       }
-      while(errs.available() > 0) {
-        int len = errs.read(errTmp);
-        if (len < 0) break;
-        err.write(errTmp, 0, len);
+    });
+    Future<ByteArrayOutputStream> ftErr = pool.submit(new Callable<ByteArrayOutputStream>() {
+      @Override public ByteArrayOutputStream call() throws Exception {
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        int len = 0;
+        byte[] errTmp = new byte[4096];
+        while((len = errs.read(errTmp)) > -1) {
+          err.write(errTmp, 0, len);
+        }
+        return err;
       }
-      if (channel.isClosed()) {
-        if (in.available() > 0) continue;
-        exitStatus = channel.getExitStatus();
-        break;
-      }
-      Thread.sleep(100);
-    }
+    });
+    ByteArrayOutputStream res = ftRes.get();
+    ByteArrayOutputStream err = ftErr.get();
+
     if (err.size() > 0) {
       throw new Exception("Unable to process command (" + err.toString("UTF-8") + ")");
     }
     channel.disconnect();
     session.disconnect();
+    pool.shutdown();
     
     return res;
   }
