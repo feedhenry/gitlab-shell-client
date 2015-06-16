@@ -1,3 +1,7 @@
+# 4.0.1
+
+- Using futures to read stdout & stderr to streams to improve performance
+
 # 4.0.0
 
 - removed GLSProject object in favour of just using a String (Thats all a project is anyways, for now) 

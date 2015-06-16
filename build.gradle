@@ -6,7 +6,7 @@ apply plugin: 'signing'
 group = 'com.feedhenry.gitlabshell'
 archivesBaseName = 'gitlab-shell-client'
 sourceCompatibility = 1.6
-version = '4.0.0'
+version = '4.0.1'
 
 buildscript {
     repositories {
@@ -45,7 +45,7 @@ repositories {
 dependencies {
     compile 'com.jcraft:jsch:0.1.51'
     compile 'org.apache.commons:commons-lang3:3.3.2'
-    testCompile 'junit:junit:4.+'
+    testCompile 'junit:junit:[4,5)'
     testCompile 'org.mockito:mockito-all:1.9.5'
 }
 
