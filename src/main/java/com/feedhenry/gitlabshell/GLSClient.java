@@ -117,8 +117,8 @@ public class GLSClient {
         return err;
       }
     });
-    ByteArrayOutputStream res = ftRes.get();
-    ByteArrayOutputStream err = ftErr.get();
+    ByteArrayOutputStream res = ftRes.get(20, TimeUnit.SECONDS);
+    ByteArrayOutputStream err = ftErr.get(20, TimeUnit.SECONDS);
 
     if (err.size() > 0) {
       throw new Exception("Unable to process command (" + err.toString("UTF-8") + ")");
