@@ -1,3 +1,6 @@
+# 4.0.2
+- Ensure futures timeout rather than wait indefinitely
+
 # 4.0.1
 
 - Using futures to read stdout & stderr to streams to improve performance
