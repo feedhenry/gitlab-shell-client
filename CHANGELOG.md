@@ -1,3 +1,6 @@
+# 4.0.3
+- Security Vulnerabilities: Upgrade the Gradle dep com.jcraft:jsch from 0.1.51 to 0.1.54
+
 # 4.0.2
 - Ensure futures timeout rather than wait indefinitely
 
